@@ -5,9 +5,20 @@ const { AotPlugin } = require('@ngtools/webpack');
 const jsonServer = require('json-server');
 
 const rules = [
-  { test: /\.html$/, loader: 'html-loader' },
-  { test: /\.scss$/, loaders: ['raw-loader', 'sass-loader'] },
-  { test: /\.(jpe?g|png|gif|svg)$/i, loader: 'file-loader' },
+  { test: /\.html$/, use: 'html-loader' },
+  { test: /\.s[ac]ss$/i, type: 'asset/source' },
+  // {
+  //       test: /\.s[ac]ss$/i,
+  //       use: [
+  //         // Creates `style` nodes from JS strings
+  //         "style-loader",
+  //         // Translates CSS into CommonJS
+  //         "css-loader",
+  //         // Compiles Sass to CSS
+  //         "sass-loader",
+  //       ],
+  //     },
+  { test: /\.(jpe?g|png|gif|svg)$/i, type: 'asset/resource' },
 ];
 
 const plugins = [
@@ -15,17 +26,13 @@ const plugins = [
     'process.env': {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     },
-  }),
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'vendor',
-    minChunks: module => module.context && /node_modules/.test(module.context),
-  }),
+  })
 ];
 
 if (process.env.NODE_ENV === 'production') {
   rules.push({
     test: /\.ts$/,
-    loaders: ['@ngtools/webpack'],
+    use: ['@ngtools/webpack']
   });
   plugins.push(
     new AotPlugin({
@@ -60,14 +67,14 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   rules.push({
     test: /\.ts$/,
-    loaders: [
+    use: [
       'awesome-typescript-loader',
       'angular-router-loader',
-      'angular2-template-loader',
-    ],
+      'angular2-template-loader'
+    ]
   });
   plugins.push(
-    new webpack.NamedModulesPlugin(),
+    // new webpack.NamedModulesPlugin(),
     new webpack.ContextReplacementPlugin(
       /angular(\\|\/)core(\\|\/)@angular/,
       path.resolve(__dirname, './notfound')
@@ -94,11 +101,11 @@ module.exports = {
     },
     publicPath: '/build/',
     port: 3000,
-    setup: function(app) {
+    before: function(app) {
       app.use('/api', jsonServer.router('db.json'));
     },
   },
-  devtool: 'sourcemap',
+  devtool: 'eval-source-map',
   entry: {
     app: ['zone.js/dist/zone', './src/main.ts'],
   },
@@ -108,12 +115,13 @@ module.exports = {
     publicPath: '/build/',
     path: path.resolve(__dirname, 'build'),
   },
+  optimization: {
+    splitChunks: {name: 'vendor', chunks: 'all'}
+  },
   node: {
-    console: false,
-    global: true,
-    process: true,
-    Buffer: false,
-    setImmediate: false,
+    global: false,
+    __filename: false,
+    __dirname: false,
   },
   module: {
     rules,

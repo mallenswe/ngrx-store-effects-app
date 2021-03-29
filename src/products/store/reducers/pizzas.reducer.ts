@@ -9,18 +9,7 @@ export interface PizzaState {
 }
 
 export const initialState: PizzaState = {
-    data: [
-        {
-            "name": "Plain Ol' Pepperoni",
-            "toppings": [
-                {
-                    "id": 10,
-                    "name": "pepperoni"
-                }
-            ],
-            "id": 3
-        }
-    ],
+    data: [],
     loaded: false,
     loading: false
 };
@@ -38,10 +27,13 @@ export function reducer(
             };
         }
         case fromPizzas.LOAD_PIZZAS_SUCCESS: {
+            console.log('LOAD_PIZZAS_SUCCESS action.payload: ', action.payload);
+            const data = action.payload;
             return {
                 ...state,
                 loading: false,
-                loaded: true
+                loaded: true,
+                data
             };
         }
         case fromPizzas.LOAD_PIZZAS_FAIL: {

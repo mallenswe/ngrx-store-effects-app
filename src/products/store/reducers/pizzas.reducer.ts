@@ -72,6 +72,18 @@ export function reducer(
                 entities
             }
         }
+
+        case fromPizzas.REMOVE_PIZZA_SUCCESS: {
+            const pizza = action.payload;
+            const { [pizza.id]: removed, ...entities } = state.entities;
+
+            console.log('fromPizzas.REMOVE_PIZZA_SUCCESS removed: ', removed);
+
+            return {
+                ...state,
+                entities
+            }
+        }
     }
 
     return state;

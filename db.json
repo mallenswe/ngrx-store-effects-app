@@ -153,24 +153,6 @@
         }
       ],
       "id": 4
-    },
-    {
-      "name": "Spicy Bacon",
-      "toppings": [
-        {
-          "id": 3,
-          "name": "basil"
-        },
-        {
-          "id": 4,
-          "name": "chili"
-        },
-        {
-          "id": 2,
-          "name": "bacon"
-        }
-      ],
-      "id": 5
     }
   ]
 }

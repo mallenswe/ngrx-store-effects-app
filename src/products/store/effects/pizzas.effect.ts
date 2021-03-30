@@ -15,7 +15,8 @@ export class PizzasEffects {
     }
 
     @Effect()
-    loadPizzas$ = this.actions$.ofType(pizzaActions.LOAD_PIZZAS)
+    loadPizzas$ = this.actions$
+        .ofType(pizzaActions.LOAD_PIZZAS)
         .pipe(
             switchMap(() => {
                 return this.pizzaService.getPizzas()
@@ -25,4 +26,19 @@ export class PizzasEffects {
                     )
             })
         );
+
+    @Effect()
+    createPizza$ = this.actions$
+        .ofType(pizzaActions.CREATE_PIZZA)
+        .pipe(
+            map((action: pizzaActions.CreatePizza) => action.payload)
+            , switchMap(pizza => {
+                return this.pizzaService
+                    .createPizza(pizza)
+                    .pipe(
+                        map(pizza => new pizzaActions.CreatePizzaSuccess(pizza))
+                        , catchError(error => of(new pizzaActions.CreatePizzaFail(error)))
+                    )
+            })
+        )
 }

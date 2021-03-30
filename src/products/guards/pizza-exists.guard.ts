@@ -3,7 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { tap, map, switchMap, filter, take, catchError } from 'rxjs/operators';
+import { tap, map, filter, take, switchMap } from 'rxjs/operators';
 import * as fromStore from '../store';
 
 import { Pizza } from '../models/pizza.model';
@@ -14,11 +14,11 @@ export class PizzaExistsGuards implements CanActivate {
         private store: Store<fromStore.ProductsState>
     ) { }
 
-    canActivate(route: ActivatedRouteSnapshot) {
+    canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
         return this.checkStore()
             .pipe(
                 switchMap(() => {
-                    const id = parseInt(route.params.pizzaId);
+                    const id = parseInt(route.params.pizzaId, 10);
                     return this.hasPizza(id);
                 })
             )
@@ -30,7 +30,7 @@ export class PizzaExistsGuards implements CanActivate {
             .pipe(
                 map((entities: { [key: number]: Pizza }) => !!entities[id])
                 , take(1)
-            )
+            );
     }
 
     checkStore(): Observable<boolean> {

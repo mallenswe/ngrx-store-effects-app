@@ -19,7 +19,7 @@ export class PizzasGuard implements CanActivate {
         return this.checkStore()
             .pipe(
                 switchMap(() => of(true))
-                , catchError(error => of(false))
+                , catchError(() => of(false))
             );
     };
 
